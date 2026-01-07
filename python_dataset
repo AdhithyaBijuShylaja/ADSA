@@ -1,0 +1,43 @@
+%pip install pandas numpy openpyxl
+
+
+import pandas as pd
+import numpy as np
+
+df = pd.read_excel("test_data.xlsx")
+df.head()
+
+df = df.dropna().copy()
+df.info()
+
+subset = df.loc[144400:148400].copy()
+subset.shape
+
+#Q1: NUMBER OF UNIQUE INVOICES
+unique_invoices = subset["Invoice"].nunique()
+unique_invoices
+
+#Q2: COUNTRY WITH MOST ORDERS
+orders_by_country = subset.groupby("Country")["Invoice"].nunique()
+
+most_orders_country = orders_by_country.sort_values(ascending=False).head(1)
+most_orders_country
+
+#Q3: COUNTRY WITH LEAST ORDERS
+least_orders_country = orders_by_country.sort_values().head(1)
+least_orders_country
+
+#Q4: HIGHEST TOTAL PRICE PER ITEM IN ONE ORDER
+
+subset["TotalPrice"] = subset["Price"] * subset["Quantity"]
+
+highest_item = subset.loc[subset["TotalPrice"].idxmax()]
+highest_item[["Invoice", "TotalPrice"]]
+
+#Q5: SECOND HIGHEST SPENDING CUSTOMER
+customer_spend = subset.groupby("Customer ID")["TotalPrice"].sum()
+
+second_customer = customer_spend.sort_values(ascending=False).iloc[1]
+second_customer_id = customer_spend.sort_values(ascending=False).index[1]
+
+second_customer_id, second_customer
