@@ -1,5 +1,8 @@
 %pip install pandas numpy openpyxl
 
+print("NaN values per column:")
+print(df.isna().sum())
+
 
 import pandas as pd
 import numpy as np
