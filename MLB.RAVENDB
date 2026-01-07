@@ -1,0 +1,10 @@
+Replace team abbreviation in players with propper team name (full team name).
+Write the update/patch script.
+Attach export of the database (database dump).
+
+from Mlb_players as p
+load Mlb_teams_2012 as t
+where p.Team == t.Abbreviation
+update {
+    p.Team = t.Name;
+}
