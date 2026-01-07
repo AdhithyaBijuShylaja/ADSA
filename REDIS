@@ -17,3 +17,6 @@ JSON.SET employee:123 $ '{
 
 > DEL employee:2 
 (integer) 1
+
+JSON.DEL employee:2 $.SalaryGroup
+(integer) 0
