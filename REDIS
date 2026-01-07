@@ -3,3 +3,17 @@ JSON.SET employee:123 $ '{
   "Nationality": "Czech",
   "SalaryGroup": 12
 }'
+
+
+
+> JSON.SET employee:2 $ '{ "Department": "IT", "Nationality": "India", "SalaryGroup": 12 }' 
+"OK"
+
+> JSON.SET employee:2 $.SalaryGroup 15 
+"OK"
+
+> JSON.GET employee:2 
+"{\"Department\":\"IT\",\"Nationality\":\"India\",\"SalaryGroup\":15}"
+
+> DEL employee:2 
+(integer) 1
