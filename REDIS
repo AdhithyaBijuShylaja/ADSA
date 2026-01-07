@@ -1,0 +1,5 @@
+JSON.SET employee:123 $ '{
+  "Department": "IT",
+  "Nationality": "Czech",
+  "SalaryGroup": 12
+}'
