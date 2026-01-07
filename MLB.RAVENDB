@@ -8,3 +8,32 @@ where p.Team == t.Abbreviation
 update {
     p.Team = t.Name;
 }
+Which team has the shortest/smallest players on average (team height average)?
+Write the answer (team name, average height) + full query/index.
+Smallest average height 
+Team : NYM
+Average Height : 72.94
+Index :
+MAP: 
+from p in docs.Mlb_players_news
+select new {
+     p.Team,
+     Height = p.BodyHeightInches,
+     Count = 1,
+     Average = 1
+}
+REDUCE :
+from r in results
+group r by r.Team into g
+let count = g.Sum(x => x.Count)
+let height = g.Sum(x => x.Height)
+select new
+{
+    Team = g.Key,
+    Height = height,
+    Count = count,
+    Average = height / count
+}
+QUERY : from index "avg" 
+order by Average asc
+select Team,Average limit 1
