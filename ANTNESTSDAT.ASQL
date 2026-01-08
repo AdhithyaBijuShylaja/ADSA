@@ -1,0 +1,207 @@
+
+/* 
+QUESTION:
+What is the id, name, type, and number of shifts of the most diligent ant
+(ant with the highest number of shifts)?
+Write id, name, type name, and number of shifts.
+*/
+
+SELECT TOP 1
+    a.Id AS AntId,
+    a.Name AS AntName,
+    t.Name AS TypeName,
+    COUNT(s.Date) AS NumberOfShifts
+FROM Ant a
+JOIN Shift s
+    ON a.Id = s.Ant
+JOIN Type t
+    ON a.Type = t.Code
+GROUP BY
+    a.Id,
+    a.Name,
+    t.Name
+ORDER BY
+    COUNT(s.Date) DESC;
+
+----------------------------------------------------------------------------------------
+
+-- Find customers with the highest number of sales
+-- in the 2nd fiscal semester across all years
+
+WITH SalesInSecondSemester AS (
+    SELECT
+        c.LastName,
+        COUNT(*) AS NumberOfSales
+    FROM FactInternetSales fis
+    JOIN DimCustomer c
+        ON fis.CustomerKey = c.CustomerKey
+    JOIN DimDate d
+        ON fis.OrderDateKey = d.DateKey
+    WHERE d.FiscalSemester = 2
+    GROUP BY c.LastName
+)
+
+SELECT TOP 1
+    LastName,
+    NumberOfSales
+FROM SalesInSecondSemester
+ORDER BY NumberOfSales DESC;
+
+
+---------------------------------------------
+-- Question: 1️⃣ Top customer by number of sales (overall)
+-- Which customer has the highest number of sales overall?
+-- Write the customer's last name and number of sales.
+
+SELECT TOP 1
+    c.LastName,
+    COUNT(*) AS NumberOfSales
+FROM FactInternetSales fis
+JOIN DimCustomer c
+    ON fis.CustomerKey = c.CustomerKey
+GROUP BY c.LastName
+ORDER BY NumberOfSales DESC;
+-----------------------------------------------------------------
+-- Question:2️⃣ Top customer by number of sales in 2nd fiscal semester (ALL years)
+-- What customer has the highest number of sales
+-- in the 2nd fiscal semester across all years?
+
+SELECT TOP 1
+    c.LastName,
+    COUNT(*) AS NumberOfSales
+FROM FactInternetSales fis
+JOIN DimCustomer c
+    ON fis.CustomerKey = c.CustomerKey
+JOIN DimDate d
+    ON fis.OrderDateKey = d.DateKey
+WHERE d.FiscalSemester = 2
+GROUP BY c.LastName
+ORDER BY NumberOfSales DESC;
+--------------------------------------------------------------------------
+
+-- Question:3️⃣ Top product by number of sales
+-- Which product has the highest number of sales?
+-- Write product name and number of sales.
+
+SELECT TOP 1
+    p.EnglishProductName,
+    COUNT(*) AS NumberOfSales
+FROM FactInternetSales fis
+JOIN DimProduct p
+    ON fis.ProductKey = p.ProductKey
+GROUP BY p.EnglishProductName
+ORDER BY NumberOfSales DESC;
+-------------------------------------------------------------
+
+-- Question:4️⃣ Top product category by number of sales
+-- Which product category has the highest number of sales?
+
+SELECT TOP 1
+    pc.EnglishProductCategoryName,
+    COUNT(*) AS NumberOfSales
+FROM FactInternetSales fis
+JOIN DimProduct p
+    ON fis.ProductKey = p.ProductKey
+JOIN DimProductSubcategory psc
+    ON p.ProductSubcategoryKey = psc.ProductSubcategoryKey
+JOIN DimProductCategory pc
+    ON psc.ProductCategoryKey = pc.ProductCategoryKey
+GROUP BY pc.EnglishProductCategoryName
+ORDER BY NumberOfSales DESC;
+-------------------------------------------------------------------------
+-- Question:5️⃣ Top sales territory by number of sales
+-- Which sales territory has the highest number of sales?
+
+SELECT TOP 1
+    st.SalesTerritoryRegion,
+    COUNT(*) AS NumberOfSales
+FROM FactInternetSales fis
+JOIN DimSalesTerritory st
+    ON fis.SalesTerritoryKey = st.SalesTerritoryKey
+GROUP BY st.SalesTerritoryRegion
+ORDER BY NumberOfSales DESC;
+----------------------------------------------------------------------
+
+-- Question:6️⃣ Year with the highest number of sales
+-- Which year has the highest number of sales?
+
+SELECT TOP 1
+    d.CalendarYear,
+    COUNT(*) AS NumberOfSales
+FROM FactInternetSales fis
+JOIN DimDate d
+    ON fis.OrderDateKey = d.DateKey
+GROUP BY d.CalendarYear
+ORDER BY NumberOfSales DESC;
+----------------------------------------------------------------------
+-- Question:7️⃣ Month with the highest sales amount
+-- Which month has the highest total sales amount?
+
+SELECT TOP 1
+    d.EnglishMonthName,
+    SUM(fis.SalesAmount) AS TotalSales
+FROM FactInternetSales fis
+JOIN DimDate d
+    ON fis.OrderDateKey = d.DateKey
+GROUP BY d.EnglishMonthName
+ORDER BY TotalSales DESC;
+-------------------------------------------------------
+-- Question:8️⃣ Customer with highest total sales amount
+-- Which customer generated the highest total sales amount?
+
+SELECT TOP 1
+    c.LastName,
+    SUM(fis.SalesAmount) AS TotalSales
+FROM FactInternetSales fis
+JOIN DimCustomer c
+    ON fis.CustomerKey = c.CustomerKey
+GROUP BY c.LastName
+ORDER BY TotalSales DESC;
+-------------------------------------------------------------
+-- Question:9️⃣ Promotion with the highest number of sales
+-- Which promotion resulted in the highest number of sales?
+
+SELECT TOP 1
+    p.EnglishPromotionName,
+    COUNT(*) AS NumberOfSales
+FROM FactInternetSales fis
+JOIN DimPromotion p
+    ON fis.PromotionKey = p.PromotionKey
+GROUP BY p.EnglishPromotionName
+ORDER BY NumberOfSales DESC;
+------------------------------------------------------------
+
+-- Question:🔟 Product bought most often for a specific sales reason (e.g. "Review")
+-- For which product is "Review" the most popular reason to buy?
+-- Write product name and number of sales.
+
+SELECT TOP 1
+    p.EnglishProductName,
+    COUNT(*) AS NumberOfSales
+FROM FactInternetSalesReason fr
+JOIN DimSalesReason sr
+    ON fr.SalesReasonKey = sr.SalesReasonKey
+JOIN FactInternetSales fis
+    ON fr.SalesOrderNumber = fis.SalesOrderNumber
+JOIN DimProduct p
+    ON fis.ProductKey = p.ProductKey
+WHERE sr.SalesReasonName = 'Review'
+GROUP BY p.EnglishProductName
+ORDER BY NumberOfSales DESC;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
